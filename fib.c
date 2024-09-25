@@ -2,16 +2,29 @@
 #include <stdlib.h>
 #include <string.h>
 
-// Recursive function to calculate the Nth Fibonacci number
-long long int fibonacci_recursive(long long int n) {
+#define MAX_FIB 100 // Define a limit for memoization
+
+// Global array for memoization
+long long int memo[MAX_FIB];
+
+// Recursive Fibonacci function with memoization applied
+long long int fib_r(long long int n) {
     if (n <= 1) {
         return n;
     }
-    return fibonacci_recursive(n - 1) + fibonacci_recursive(n - 2);
+    
+    // If the value has already been computed, return it from memo
+    if (memo[n] != -1) {
+        return memo[n];
+    }
+    
+    // Otherwise, compute it recursively and store it in memo
+    memo[n] = fib_r(n - 1) + fib_r(n - 2);
+    return memo[n];
 }
 
-// Iterative function to calculate the Nth Fibonacci number
-long long int fibonacci_iterative(long long int n) {
+// Iterative Fibonacci function (no need for memoization, but included for consistency)
+long long int fib_i(long long int n) {
     if (n <= 1) {
         return n;
     }
@@ -25,7 +38,7 @@ long long int fibonacci_iterative(long long int n) {
 }
 
 int main(int argc, char *argv[]) {
-    if (argc != 3) {
+    if (argc != 4) {
         return 1;
     }
 
@@ -35,12 +48,31 @@ int main(int argc, char *argv[]) {
     // Parse the second argument (method: r or i)
     char method = argv[2][0];
 
+    // Parse the third argument (filename)
+    FILE *file = fopen(argv[3], "r");
+    if (!file) {
+        return 1;
+    }
+
+    // Read the integer from the file
+    long long int file_num;
+    fscanf(file, "%lld", &file_num);
+    fclose(file);
+
+    // Add the two integers
+    long long int N = input_num + file_num;
+
+    // Initialize memoization array with -1
+    for (int i = 0; i <= N; i++) {
+        memo[i] = -1;
+    }
+
     // Calculate the Nth Fibonacci number based on the method
     long long int result;
     if (method == 'r') {
-        result = fibonacci_recursive(input_num);
+        result = fib_r(N);
     } else if (method == 'i') {
-        result = fibonacci_iterative(input_num);
+        result = fib_i(N);
     } else {
         return 1;
     }
