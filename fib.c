@@ -2,43 +2,36 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define MAX_FIB 100 // Define a limit for memoization
-
-// Global array for memoization
-long long int memo[MAX_FIB];
-
-// Recursive Fibonacci function with memoization applied
-long long int fib_r(long long int n) {
-    if (n <= 1) {
-        return n;
+// Recursive function to calculate the Nth Fibonacci number
+long long int fibonacci_recursive(long long int n) {
+    if (n == 1) {
+        return 0;  // Start the sequence with fib(1) = 0
     }
-    
-    // If the value has already been computed, return it from memo
-    if (memo[n] != -1) {
-        return memo[n];
+    if (n == 2) {
+        return 1;  // The second Fibonacci number is 1
     }
-    
-    // Otherwise, compute it recursively and store it in memo
-    memo[n] = fib_r(n - 1) + fib_r(n - 2);
-    return memo[n];
+    return fibonacci_recursive(n - 1) + fibonacci_recursive(n - 2);
 }
 
-// Iterative Fibonacci function (no need for memoization, but included for consistency)
-long long int fib_i(long long int n) {
-    if (n <= 1) {
-        return n;
+// Iterative function to calculate the Nth Fibonacci number
+long long int fibonacci_iterative(long long int n) {
+    if (n == 1) {
+        return 0;  // Start the sequence with fib(1) = 0
+    }
+    if (n == 2) {
+        return 1;  // The second Fibonacci number is 1
     }
     long long int a = 0, b = 1, fib = 0;
-    for (long long int i = 2; i <= n; ++i) {
+    for (long long int i = 3; i <= n; ++i) {
         fib = a + b;
         a = b;
         b = fib;
     }
-    return fib;
+    return b;
 }
 
 int main(int argc, char *argv[]) {
-    if (argc != 4) {
+    if (argc != 3) {
         return 1;
     }
 
@@ -48,31 +41,12 @@ int main(int argc, char *argv[]) {
     // Parse the second argument (method: r or i)
     char method = argv[2][0];
 
-    // Parse the third argument (filename)
-    FILE *file = fopen(argv[3], "r");
-    if (!file) {
-        return 1;
-    }
-
-    // Read the integer from the file
-    long long int file_num;
-    fscanf(file, "%lld", &file_num);
-    fclose(file);
-
-    // Add the two integers
-    long long int N = input_num + file_num;
-
-    // Initialize memoization array with -1
-    for (int i = 0; i <= N; i++) {
-        memo[i] = -1;
-    }
-
     // Calculate the Nth Fibonacci number based on the method
     long long int result;
     if (method == 'r') {
-        result = fib_r(N);
+        result = fibonacci_recursive(input_num);
     } else if (method == 'i') {
-        result = fib_i(N);
+        result = fibonacci_iterative(input_num);
     } else {
         return 1;
     }
